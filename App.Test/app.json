@@ -1,5 +1,5 @@
 {
-    "id": "",
+    "id": "203dcd13-03f5-4da8-9ca8-20f5c3a3c70d",
     "name": "Test App Name",
     "publisher": "Yellow Solution AB",
     "version": "1.0.0.0",
@@ -11,12 +11,6 @@
     "url": "https://yellowsolution.se",
     "logo": "",
     "dependencies": [
-      {
-        "id": "",
-        "name": "App Name",
-        "publisher": "Yellow Solution AB",
-        "version": "1.0.0.0"
-      },
       {
         "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
         "publisher": "Microsoft",
