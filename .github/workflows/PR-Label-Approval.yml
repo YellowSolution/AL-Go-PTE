@@ -1,15 +1,52 @@
 name: 'PR Label - Approval'
 
-on:
+on: 
   pull_request_review:
-    types: [submitted]
+    types: [submitted, dismissed]
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
+  remove-when-dismissed:
+    name: Remove approval label when PR review is dismissed
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'dismissed'
+    steps:
+      - name: Remove approval label
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            // Define the label name
+            const labelName = 'approved-by-team';
+            
+            // Check if the PR already has the label to avoid unnecessary API calls
+            const issueLabels = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number
+            });
+            
+            // Check if label already exists on the PR
+            const hasLabel = issueLabels.data.some(label => label.name === labelName);
+            
+            if (hasLabel) {
+              // Remove the label from the PR
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                name: labelName
+              });
+              console.log(`Removed ${labelName} label from PR #${context.payload.pull_request.number}`);
+            } else {
+              console.log(`PR #${context.payload.pull_request.number} does not have the ${labelName} label`);
+            }
+
   label-when-approved:
+    name: Add approval label when PR review is approved
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
     steps:
